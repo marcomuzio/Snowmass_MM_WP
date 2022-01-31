@@ -20,8 +20,6 @@ particleLbls = ['Photons', 'CRs', 'Neutrinos', 'GWs']
 
 regions = {}
 
-#cmaps = ['Greens', 'Blues', 'Greys', 'Purples']
-
 hPlanck = 4.136e-15 # eV/Hz
 
 ymin = 2020
@@ -65,8 +63,6 @@ for particle in particles:
 
 	patch = PolygonPatch(regions[particle], fc=colors[particle], ec='dimgrey', alpha=0.5)
 	plt.gca().add_patch(patch)
-	#xs, ys = regions[particle].exterior.coords.xy
-	#plt.gca().fill(xs, ys, facecolor=colors[particle], edgecolor='dimgrey', alpha=0.5)
 
 plt.xlim(1e-21, 1e22)
 plt.ylim(ymin, ymax)
@@ -86,7 +82,6 @@ ax2 = ax1.twiny()
 ax2.set_xlim(np.array(ax1.get_xlim())/hPlanck)
 ax2.set_xscale('log')
 ax2.set_xticks(new_tick_locations)
-#ax2.set_xticklabels(new_tick_locations)
 ax2.set_xlabel(r"Frequency (Hz)")
 
 
@@ -97,7 +92,7 @@ for particle in particles:
 	l[i] = plt.fill_between([1e0,1e0], 0, 0, facecolor=colors[particle], edgecolor='dimgrey', alpha=0.5)
 	i += 1
 
-plt.legend(handles=l,labels=particleLbls, loc=8, bbox_to_anchor=(0.5, 1.1, 0., 0.), numpoints=1, ncol=4, frameon=False, framealpha=0.) # prop={'size':16},
+plt.legend(handles=l,labels=particleLbls, loc=8, bbox_to_anchor=(0.5, 1.1, 0., 0.), numpoints=1, ncol=4, frameon=False, framealpha=0.)
 
 plt.tight_layout()
 
