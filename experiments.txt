@@ -1,4 +1,4 @@
-Experiment,Start Year,End Year,Particle,lgElow,lgEhi
+Experiment,Start Year,End Year,Particle,lgElow,lgEhi,isFunded
 ### GRAVITATIONAL WAVES ###
 A-LIGO/A-Virgo,2023,2050,gw,-13.38,-10.38
 #A-Virgo,2023,2050,gw
