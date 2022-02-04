@@ -6,19 +6,38 @@ from matplotlib.ticker import FormatStrFormatter
 from descartes import PolygonPatch
 import shapely.geometry as sg
 import shapely.ops as so
+import matplotlib as mpl
+mpl.rcParams['hatch.linewidth'] = 1.0
+
+def setAlpha(c, alpha):
+	c = mpl.colors.to_rgba_array(c)[0]
+	c[-1] = alpha
+	return c
 
 data = pd.read_csv("experiments.txt", index_col=False, comment='#')
 
-particles = ['gamma', 'cr', 'nu', 'gw']
+particles = ['gamma', 'nu', 'cr', 'gw']
 
-colors = {'gamma' : 'cornflowerblue',
-		  'cr' : 'yellow',
-		  'nu' : 'darkorange',
-		  'gw' : 'forestgreen'}
+facecolors = {'gamma' : 'cornflowerblue',
+			  'cr' : 'red', #'yellow',
+			  'nu' : 'xkcd:gold', #'yellow', #'darkorange',
+			  'gw' : 'forestgreen'}
+edgecolors = {'gamma' : setAlpha('cornflowerblue',0.8),
+			  'cr' : setAlpha('xkcd:pastel red',0.8),
+			  'nu' : setAlpha('xkcd:gold',0.8),
+			  'gw' : setAlpha('forestgreen',0.8)}
+hatches = {'gamma' : '///',
+		   'cr' : '\\\\\\',
+		   'nu' : '///',
+		   'gw' : '\\\\\\'}
+particleLbls = {'gamma' : 'Photons',
+				'nu' : 'Neutrinos',
+				'cr' : 'CRs',
+				'gw' : 'GWs'}
 
-particleLbls = ['Photons', 'CRs', 'Neutrinos', 'GWs']
 
-regions = {}
+regions = [{},{}]
+
 
 hPlanck = 4.136e-15 # eV/Hz
 
@@ -28,6 +47,7 @@ ymax = 2040
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
 plt.rcParams['mathtext.fontset'] = "stix"
 
+# get regions
 for i in range(0, len(data)):
 
 	experiment = data['Experiment'].values[i]
@@ -40,6 +60,8 @@ for i in range(0, len(data)):
 	lgElow = data['lgElow'].values[i]
 	lgEhi = data['lgEhi'].values[i]
 
+	isFunded = int(data['isFunded'].values[i])
+
 	Elow = 10**lgElow
 	Ehi = 10**lgEhi
 
@@ -49,20 +71,49 @@ for i in range(0, len(data)):
 
 	#plt.fill_between([Elow, Ehi], start, end, facecolor=colors[particle], edgecolor='dimgrey', label=experiment, alpha=0.5)
 	
-	print("box", experiment, Elow, start, Ehi, end)
+	#print("box", experiment, Elow, start, Ehi, end)
 	r = sg.box(Elow, start, Ehi, end)
-	if particle in regions:
-		oldr = regions[particle]
-		regions[particle] = so.unary_union([oldr,r])
+	if particle in regions[isFunded]:
+		oldr = regions[isFunded][particle]
+		regions[isFunded][particle] = so.unary_union([oldr,r])
 	else:
-		regions[particle] = r
+		regions[isFunded][particle] = r
 	#plt.text(Elow*10**0.1, ypos, experiment, color='white', rotation=90)
 
-print("plotting")
+# modify unfunded region to remove overlaps with funded region
 for particle in particles:
 
-	patch = PolygonPatch(regions[particle], fc=colors[particle], ec='dimgrey', alpha=0.5)
+	unfunded = regions[0][particle]
+	funded = regions[1][particle]
+	
+	if(unfunded.intersects(funded)==True):
+
+		nonoverlap = (unfunded.symmetric_difference(funded)).difference(funded)
+		regions[0][particle] = nonoverlap
+
+print("plotting")
+l = [None]*len(particles)
+i = 0
+for particle in particles:
+
+	#patch = PolygonPatch(regions[0][particle], fc='white', ec=colors[particle], hatch=hatches[particle], alpha=0.25)
+	#patch = PolygonPatch(regions[0][particle], fc=colors[particle], ec='dimgrey', hatch='/', alpha=0.25)
+	#plt.gca().add_patch(patch)
+	patch = PolygonPatch(regions[1][particle], fc=facecolors[particle], ec='dimgrey', alpha=0.25)
+	#patch = PolygonPatch(regions[1][particle], fc='white', ec=colors[particle], hatch=hatches[particle], alpha=0.4)
+	l[i] = plt.gca().add_patch(patch)
+	i += 1
+
+for particle in particles:
+
+	if(regions[0][particle].is_empty):
+		continue
+
+	patch = PolygonPatch(regions[0][particle], fc=(1,1,1,0.3), ec=edgecolors[particle], hatch=hatches[particle])#, alpha=0.8)
+	#patch = PolygonPatch(regions[0][particle], fc=colors[particle], ec='dimgrey', hatch='/', alpha=0.25)
 	plt.gca().add_patch(patch)
+	#patch = PolygonPatch(regions[1][particle], fc=colors[particle], ec='dimgrey', alpha=0.4)
+	#plt.gca().add_patch(patch)
 
 plt.xlim(1e-21, 1e22)
 plt.ylim(ymin, ymax)
@@ -86,13 +137,15 @@ ax2.set_xlabel(r"Frequency (Hz)")
 
 
 # fake line for legend
-l = [None]*len(particles)
+#l = [None]*len(particles)
+lbls = [None]*len(particles)
 i = 0
 for particle in particles:
-	l[i] = plt.fill_between([1e0,1e0], 0, 0, facecolor=colors[particle], edgecolor='dimgrey', alpha=0.5)
+	#l[i] = plt.fill_between([1e0,1e0], 0, 0, facecolor=facecolors[particle], edgecolor='dimgrey', alpha=0.5)
+	lbls[i] = particleLbls[particle]
 	i += 1
 
-plt.legend(handles=l,labels=particleLbls, loc=8, bbox_to_anchor=(0.5, 1.1, 0., 0.), numpoints=1, ncol=4, frameon=False, framealpha=0.)
+plt.legend(handles=l,labels=lbls, loc=8, bbox_to_anchor=(0.5, 1.1, 0., 0.), numpoints=1, ncol=4, frameon=False, framealpha=0.)
 
 plt.tight_layout()
 
