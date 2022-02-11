@@ -190,7 +190,10 @@ for band in bands:
 ### no guarantees label placement will always work well ###
 for isFunded in range(0, len(contributingExps)):
 	for thisBand in contributingExps[isFunded]:
-	
+
+		if(regions[isFunded][thisBand].is_empty):
+			continue
+		
 		# get label coordinates
 		if(regions[isFunded][thisBand].geom_type == 'MultiPolygon'):
 			expLbl = [None]*len(regions[isFunded][thisBand].geoms)
