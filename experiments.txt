@@ -1,13 +1,15 @@
 Experiment,Start Year,End Year,Particle,lgElow,lgEhi,isFunded
 ###########################
 ### GRAVITATIONAL WAVES ###
-A-LIGO/A-Virgo,2023,2050,gw,-13.38,-10.38,1
+A-LIGO/A-Virgo,2023,2035,gw,-13.38,-10.38,1
 #A-Virgo,2023,2050,gw
-#KAGRA,2023,2050,gw
-#LIGO-India,2026,2050,gw
-GEO-600,2015,2050,gw,-12.68,-11.21,1
+KAGRA,2023,2035,gw,-13.38,-10.38,1
+#LIGO-India,2026,2035,gw
+GEO-600,2015,2035,gw,-12.68,-11.21,1
 LISA,2034,2050,gw,-18.38,-15.38,0 
-CE,2035,2050,gw,-13.68,-10.78,0
+Cosmic\nExplorer,2035.0000000001,2050,gw,-13.68,-10.78,0
+#nanoGRAV,
+#PTA,
 ###################
 ### COSMIC RAYS ###
 Auger,2008,2030,cr,15.7,20.3,1
@@ -20,11 +22,15 @@ LHAASO,2021,2050,cr,12,18,1
 AMS-02,2011,2031,cr,10,13.3,1
 #CALET,
 #CREDO
+IceCube,2016,2033,cr,14.5,18.1,1
+IceCubeGen-2,2033,2050,cr,15,18,0
 GCOS,2028,2050,cr,19,21,0
 GRAND,2025,2050,cr,17.3,20,0
 POEMMA,2030,2050,cr,19.5,21,0
 #################
 ### NEUTRINOS ###
+DUNE,2029,2050,nu,6.7,9.5,1
+#JUNO,,,nu,,,1
 KM3NeT-ARCA,2021,2050,nu,11,16,1
 KM3NeT-ORCA,2021,2050,nu,9.5,10.5,1
 Baikal-GVD,2021,2050,nu,12,17,1
@@ -97,3 +103,8 @@ SKA,2027,2050,gamma,-6.538,-3.98,0
 LOFAR,2018,2050,gamma,-7.383,-6,1
 Auger,2008,2030,gamma,17.3,20.3,1
 TA,2008,2030,gamma,18,20,1
+IceCube,2016,2033,gamma,14,15,1
+IceCube-Gen2,2033,2050,gamma,14,15,0
+GCOS,2028,2050,gamma,18,20,0
+VERITAS,2007,2025,gamma,10.7,13.7,1
+MAGIC,2004,2032,gamma,10.5,13.5,1
